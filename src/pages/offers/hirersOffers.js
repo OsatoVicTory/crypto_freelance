@@ -90,7 +90,7 @@ const HirersOffersPage = () => {
 
     useEffect(() => {
         filterSearch();
-    }, [checked.join("")]);
+    }, [checker.join("")]);
 
     return (
         <>

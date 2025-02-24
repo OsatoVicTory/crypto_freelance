@@ -33,11 +33,13 @@ const LogIn = () => {
                     const user = parseStringData(userRes_);
                     setUser(user);
                     setLoading(false);
+                    navigate("/app");
                 }
             } else {
                 const user = parseStringData(userRes);
                 setUser(user);
                 setLoading(false);
+                navigate("/app");
             }
         } catch (err) {
             console.log(err);
