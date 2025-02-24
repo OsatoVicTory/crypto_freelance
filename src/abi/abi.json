@@ -1,0 +1,215 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user_address",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "user_data",
+          "type": "string"
+        }
+      ],
+      "name": "createUser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hirer_address",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "hirer_data",
+          "type": "string"
+        }
+      ],
+      "name": "createHirer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hirer_address",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "offer_id",
+          "type": "uint64"
+        },
+        {
+          "internalType": "string",
+          "name": "offer",
+          "type": "string"
+        }
+      ],
+      "name": "createOffer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hirer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "offer_id",
+          "type": "uint64"
+        },
+        {
+          "internalType": "string",
+          "name": "new_offer_data",
+          "type": "string"
+        }
+      ],
+      "name": "submitApplicationOrUpdateOffer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user_address",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "offer_id",
+          "type": "uint64"
+        },
+        {
+          "internalType": "string",
+          "name": "new_offer_data",
+          "type": "string"
+        }
+      ],
+      "name": "acceptApplicant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user_address",
+          "type": "address"
+        }
+      ],
+      "name": "getUser",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hirer_address",
+          "type": "address"
+        }
+      ],
+      "name": "getHirer",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user_address",
+          "type": "address"
+        }
+      ],
+      "name": "getUserHires",
+      "outputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "",
+          "type": "uint64[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hirer_address",
+          "type": "address"
+        }
+      ],
+      "name": "getHirersOffers",
+      "outputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "",
+          "type": "uint64[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getOffersLen",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "offer_id",
+          "type": "uint64"
+        }
+      ],
+      "name": "getOffer",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]

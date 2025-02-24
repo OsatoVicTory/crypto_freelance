@@ -1,0 +1,196 @@
+.application-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.Job_Details_Modal {
+    width: 600px;
+    max-width: 100%;
+}
+.Job_Form_Modal {
+    width: 480px;
+    max-width: 100%;
+}
+.modal-top {
+    padding: 15px 18px;
+}
+.modal-top > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.m-top > h2 {
+    font-size: 25px;
+    font-weight: 550;
+    margin: 9px 0px;
+}
+.m-base {
+    margin-top: 9px;
+}
+.mb-timeline {
+    font-size: 16px;
+}
+.mb-hours {
+    font-size: 16px;
+    opacity: 0.93;
+}
+.m-body {
+    display: flex;
+    flex-direction: column;
+    margin-top: 21px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+.mb-user img {
+    width: 39px;
+    height: 39px;
+    border-radius: 6px;
+}
+.mbu-txt {
+    display: flex;
+    flex-direction: column;
+}
+.mb-desc-name {
+    font-size: 19px;
+    font-weight: 550;
+    opacity: 0.93;
+    color: #000000;
+}
+.mb-desc-value {
+    font-size: 14px;
+    line-height: 1.4rem;
+    margin-top: 12px;
+    color: #000000;
+    opacity: 0.93;
+}
+.m-pay {
+    margin-top: 30px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.mp-name {
+    font-size: 21px;
+    font-weight: 550;
+    opacity: 0.93;
+    color: #000000;
+}
+.mp-value {
+    font-size: 21px;
+    font-weight: 550;
+}
+.padd {
+    display: inline-block;
+    width: 50px;
+    height: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.application-container h2 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+#applicationForm {
+    margin-top: 12px;
+    padding-bottom: 9px;
+}
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 0px;
+    font-weight: bold;
+}
+ 
+.input-group label {
+    font-size: 15px;
+    font-weight: 550;
+}
+.input-group input, .input-group textarea {
+    width: 100%;
+    padding: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 15px;
+    margin-top: 9px;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+}
+.input-group input, .input-group textarea {
+    border: 1px solid rgba(18, 18, 18, 0.1);
+}
+.input-group input:focus, .input-group textarea:focus {
+    border: 1px solid rgba(18, 18, 18, 0.9);
+}
+.input-group textarea {
+    min-height: 90px;
+    resize: none;
+}
+.submit-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background 0.3s;
+    width: 100%;
+    margin-top: 15px;
+}
+.submit-btn:hover {
+    background: #0056b3;
+}
+.Job_Details_Modal .submit-btn {
+    margin-top: 36px;
+}
+.confirmation-message {
+    display: none;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.mb {
+    width: 100%;
+}
+.mb-user {
+    width: 100%;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 42px calc(100% - 160px) 100px;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+}
+.mb-user:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.bu-txt {
+    display: flex;
+    flex-direction: column;
+}
+.mbut-name {
+    font-size: 16px;
+}
+.mbut-role {
+    font-size: 14.5px;
+    opacity: 0.84;
+    margin-top: 3px;
+}
