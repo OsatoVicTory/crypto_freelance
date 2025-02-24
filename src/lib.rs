@@ -1,113 +1,95 @@
+// Conditionally compile the program without a main function, unless "export-abi" feature is enabled.
 #![cfg_attr(not(feature = "export-abi"), no_main)]
 
+// Set up a global memory allocator using MiniAlloc for efficient memory management in the smart contract.
+// commented
+// #[global_allocator]
+// static ALLOC: mini_alloc::MiniAlloc = mini_alloc::MiniAlloc::INIT;
+
+// Import the alloc crate to enable heap allocations in a no-std environment.
 extern crate alloc;
 
+// Import necessary types and functions from the Stylus SDK and Alloy Primitives crates.
+// These include U256 for large integers, Address for user addresses, and various
+// storage types for managing data on the blockchain.
 #[allow(unused_imports)]
-use stylus_sdk::{ alloy_primitives::{ U256, U8 }, prelude::* };
+use stylus_sdk::{ alloy_primitives::{ U256, U64 }, prelude::* };
 use alloy_primitives::{ Address, Uint };
-// use stylus_sdk::storage::{StorageString, StorageVec};
+// use stylus_sdk::{block, console};
+use stylus_sdk::storage::{ StorageString, StorageVec };
+
+// Define the storage structure for the Blog smart contract using the sol_storage! macro.
+// This structure contains mappings to store information such as the number of posts,
+// post content, user token balances, referrals, and more.
 
 sol_storage! {
     #[entrypoint]
-    pub struct Song {
-        mapping(address => string) users; 
-        mapping(address => uint256) wallets;
-        mapping(uint8 => string[]) usersvec;
-        mapping(address => string[]) txns;
-        mapping(address => string[]) songs; 
+    pub struct Hire {
+        mapping(address => string) users; // metatdata of users (users are like freelancers who are seeking job offers)
+        mapping(address => string) hirers; // metadata of hirers
+        string[] offers; // all offers
+
+        mapping(address => uint64[]) hirers_offers; // Stores ids of offers hirers made
+        mapping(address => uint64[]) user_hires; // Stores ids of offers user(or freelancers) has taken
     }
 }
 
 #[public]
-impl Song {
-    pub fn buy_song(
-        &mut self,
-        buyer: Address,
-        buyer_song_data: String,
-        update_buyer_data: String,
-        seller: Address,
-        seller_song_data: String,
-        update_seller_data: String,
-        song_id: String,
+impl Hire {
+    // Implement the Blog smart contract.
+    // This function allows users to purchase tokens by adding the specified amount to their balance.
+
+    pub fn create_user(&mut self, user_address: Address, user_data: String) {
+        let mut user_accessor = self.users.setter(user_address);
+        user_accessor.set_str(user_data);
+    }
+
+    pub fn create_hirer(&mut self, hirer_address: Address, hirer_data: String) {
+        let mut hirer_accessor = self.hirers.setter(hirer_address);
+        hirer_accessor.set_str(hirer_data);
+    }
+
+    pub fn create_offer(
+        &mut self, 
+        hirer_address: Address, 
+        offer_id: u64, 
+        offer: String
     ) {
-        let mut buyer_accessor = self.users.setter(buyer);
-        buyer_accessor.set_str(update_buyer_data);
-
-        let mut buyer_song_accessor = self.songs.setter(buyer);
-        let mut buyer_song_slot = buyer_song_accessor.grow();
-        buyer_song_slot.set_str(&buyer_song_data);
-
-        if !song_id.is_empty() {
-            let mut seller_accessor = self.users.setter(seller);
-            seller_accessor.set_str(update_seller_data);
-
-            let mut seller_song_accessor = self.songs.setter(seller);
-            let id: u8 = song_id.parse().unwrap(); // convert it to u8
-            if let Some(mut element) = seller_song_accessor.get_mut(id) {
-                element.set_str(&seller_song_data);
-            }
-        }
+        let mut f_ = self.offers.grow();
+        f_.set_str(offer);
+        
+        // store id in hirers
+        let mut hirer_offers_accessor = self.hirers_offers.setter(hirer_address);
+        hirer_offers_accessor.push(U64::from(offer_id));
     }
 
-    pub fn change_price(&mut self, user: Address, song_id: u8, update_song_data: String) {
-        let mut user_song_accessor = self.songs.setter(user);
-        if let Some(mut element) = user_song_accessor.get_mut(song_id) {
-            element.set_str(&update_song_data);
-        }
-    }
-
-    pub fn send_token(
-        &mut self,
-        sender: Address,
-        receiver: Address,
-        amount: Uint<256, 4>,
-        sender_activity: String,
-        receiver_activity: String
+    // this is to update an offer data (like name or time of offer) or to submit application to get offer
+    // both involve updating string in offers only that in submission only applicants field is updated in the offer data
+    // so string becomes (Eg "name=Frontend Job%x2description=Web Developer%x2applicants=0x3...987%+%0x2...968")
+    pub fn submit_application_or_update_offer(
+        &mut self, 
+        hirer: Address, 
+        offer_id: u64, 
+        new_offer_data: String
     ) {
-        let mut sender_wallet_accessor = self.wallets.setter(sender);
-        let sender_tokens = sender_wallet_accessor.get();
-        sender_wallet_accessor.set(sender_tokens - amount);
-
-        let mut receiver_wallet_accessor = self.wallets.setter(receiver);
-        let receiver_tokens = receiver_wallet_accessor.get();
-        receiver_wallet_accessor.set(receiver_tokens + amount);
-
-        let mut sender_accessor = self.txns.setter(sender);
-        let mut new_sender_slot = sender_accessor.grow();
-        new_sender_slot.set_str(&sender_activity);
-
-        let mut receiver_accessor = self.txns.setter(receiver);
-        let mut new_receiver_slot = receiver_accessor.grow();
-        new_receiver_slot.set_str(&receiver_activity);
+        let mut new_offer_mod = self.offers.get_mut(offer_id as usize).unwrap();
+        new_offer_mod.set(new_offer_data);
     }
 
-    pub fn create_newuser(
+    pub fn accept_applicant(
         &mut self,
-        user: Address,
-        address: String,
-        data: String,
-        zero_id: u8,
-        amount: Uint<256, 4>,
-        activity: String
+        user_address: Address,
+        offer_id: u64,
+        new_offer_data: String
     ) {
-        let mut user_accessor = self.users.setter(user);
-        user_accessor.set_str(data);
+        // new_offer_data should have status: accepted or not looking for entries/applicants again
+        // and you could now wipe out applicants field in new_offer_data string to optimize storage usage
+        let mut new_offer_mod = self.offers.get_mut(offer_id as usize).unwrap();
+        new_offer_mod.set_str(new_offer_data);
 
-        let mut users_accessor = self.usersvec.setter(U8::from(zero_id));
-        let mut new_slot = users_accessor.grow();
-        new_slot.set_str(&address);
-
-        let mut receiver_wallet_accessor = self.wallets.setter(user);
-        receiver_wallet_accessor.set(amount);
-
-        let mut receiver_accessor = self.txns.setter(user);
-        let mut new_receiver_slot = receiver_accessor.grow();
-        new_receiver_slot.set_str(&activity);
-    }
-
-    pub fn create_user(&mut self, user: Address, address: String, data: String, zero_id: u8) {
-        let mut user_accessor = self.users.setter(user);
-        user_accessor.set_str(data);
+        // after updating, push id of offer to user
+        let mut user_hire_accessor = self.user_hires.setter(user_address);
+        user_hire_accessor.push(U64::from(offer_id));
     }
 
     pub fn get_user(&self, user_address: Address) -> String {
@@ -115,40 +97,40 @@ impl Song {
         return user.get_string();
     }
 
-    pub fn get_users(&self) -> Vec<String> {
-        let users_accessor = self.usersvec.get(U8::from(0));
-        let mut users = Vec::new();
-        for i in 0..users_accessor.len() {
-            if let Some(users_guard) = users_accessor.get(i) {
-                users.push(users_guard.get_string());
-            }
-        }
-        users
+    pub fn get_hirer(&self, hirer_address: Address) -> String {
+        let user = self.hirers.getter(hirer_address);
+        return user.get_string();
     }
 
-    pub fn get_wallet(&self, user_address: Address) -> Uint<256, 4> {
-        return self.wallets.get(user_address);
+    pub fn get_user_hires(&self, user_address: Address) -> Vec<u64> {
+        let offers_accessor = self.user_hires.getter(user_address);
+        let mut offers_vec = Vec::new();
+        for i in 0..offers_accessor.len() {
+            let offers_guard = offers_accessor.get(i).unwrap();
+
+            offers_vec.push(offers_guard.to::<u64>());
+        }
+        offers_vec
     }
 
-    pub fn get_songs(&self, user_address: Address) -> Vec<String> {
-        let songs_accessor = self.songs.get(user_address);
-        let mut songs = Vec::new();
-        for i in 0..songs_accessor.len() {
-            if let Some(songs_guard) = songs_accessor.get(i) {
-                songs.push(songs_guard.get_string());
-            }
+    pub fn get_hirers_offers(&self, hirer_address: Address) -> Vec<u64> {
+        let hirers_offers_accessor = self.hirers_offers.getter(hirer_address);
+        let mut hirers_offers_vec = Vec::new();
+        for i in 0..hirers_offers_accessor.len() {
+            let hirers_offer_guard = hirers_offers_accessor.get(i).unwrap();
+
+            hirers_offers_vec.push(hirers_offer_guard.to::<u64>());
         }
-        songs
+        hirers_offers_vec
     }
 
-    pub fn get_txns(&self, user_address: Address) -> Vec<String> {
-        let txns_accessor = self.txns.get(user_address);
-        let mut txns = Vec::new();
-        for i in 0..txns_accessor.len() {
-            if let Some(txns_guard) = txns_accessor.get(i) {
-                txns.push(txns_guard.get_string());
-            }
-        }
-        txns
+    pub fn get_offers_len(&self) -> u64 {
+        return self.offers.len() as u64;
+    }
+
+    pub fn get_offer(&self, offer_id: u64) -> String {
+        let t_ self.offers.get(offer_id as usize).unwrap();
+        t_.get_string();
+        return t_.get_string();
     }
 }
