@@ -86,6 +86,10 @@ const UsersOffersPage = () => {
             if(checker.length === 0 || checker.includes(offer.skill)) arr.push(offer);
             else if(offer.name.toLowerCase().includes("developer") && checker.includes("Web Development")) arr.push(offer);
         }
+        if(!search) {
+            setDisplayData(arr);
+            return;
+        }
         const disp = [];
         for(const ar of arr) {
             if(ar.name.toLowerCase().includes(search.toLowerCase())) disp.push(ar);
@@ -94,7 +98,7 @@ const UsersOffersPage = () => {
     };
 
     useEffect(() => {
-        if(search) filterSearch();
+        filterSearch();
     }, [search, checker.join("")]);
 
     return (
