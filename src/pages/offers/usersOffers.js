@@ -14,9 +14,11 @@ const UsersOffersPage = () => {
 
     const { contract, user } = useContext(AppContext);
     const [offers, setOffers] = useState([]);
+    const [displayData, setDisplayData] = useState([]);
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [modal, setModal] = useState("");
+    const [search, setSearch] = useState("");
     const [dropdown, setDropdown] = useState("");
     const [checked, setChecked] = useState("");
     const [checker, setChecker] = useState([]);
@@ -40,6 +42,7 @@ const UsersOffersPage = () => {
                 hirerOffers.map((offer_id) => fetchOffers_(offer_id, contractInstance).then(res => res))
             );
             setOffers(res);
+            setDisplayData(res);
             setLoading(false);
         } catch (err) {
             setLoading(false);
@@ -77,13 +80,30 @@ const UsersOffersPage = () => {
         });
     }, []);
 
+    const filterSearch = () => {
+        const arr = [];
+        for(const offer of offers) {
+            if(checker.length === 0 || checker.includes(offer.skill)) arr.push(offer);
+            else if(offer.name.toLowerCase().includes("developer") && checker.includes("Web Development")) arr.push(offer);
+        }
+        const disp = [];
+        for(const ar of arr) {
+            if(ar.name.toLowerCase().includes(search.toLowerCase())) disp.push(ar);
+        }
+        setDisplayData(disp);
+    };
+
+    useEffect(() => {
+        if(search) filterSearch();
+    }, [search, checker.join("")]);
+
     return (
         <>
             <div className="Offers">
                 <header className="app-header">
                     <div className="logo"><strong>Crypto Freelance</strong></div>
                     <div className="search-bar">
-                        <input type="text" placeholder="Search for jobs..." />
+                        <input type="text" placeholder="Search for jobs..." onChange={(e) => setSearch(e.target.value)} />
                     </div>
                     <button className="connect-wallet" onClick={()=>navigate(`/app/user/${contract.address}`)}>
                         {shortenAddy(contract.address || "") || "Connect Wallet"}
@@ -162,20 +182,25 @@ const UsersOffersPage = () => {
                                 <ul>
                                     {
                                         offers.length === 0 ?
-                                        <NoData text={`No offers has bee created yet`}  />
+                                        <NoData text={`No offers has been created yet`}  />
                                         :
-                                        offers.map((val, idx) => (
-                                            <li className="jl-li" key={`jli-${idx}`}>
-                                                <div className="job-card" onClick={(e) => handleClick(e, val)}>
-                                                    <div>
-                                                        <h3>{val.name}</h3>
-                                                        <p>{val.description}</p>
-                                                        <strong>Budget: {val.pay_amount}</strong>
+                                        (
+                                            displayData.length === 0 ?
+                                            <NoData text={`No offers for search among the categories selected`}  />
+                                            :
+                                            displayData.map((val, idx) => (
+                                                <li className="jl-li" key={`jli-${idx}`}>
+                                                    <div className="job-card" onClick={(e) => handleClick(e, val)}>
+                                                        <div>
+                                                            <h3>{val.name}</h3>
+                                                            <p>{val.description}</p>
+                                                            <strong>Budget: {val.pay_amount}</strong>
+                                                        </div>
+                                                        <button className="apply-btn">Apply Now</button>
                                                     </div>
-                                                    <button className="apply-btn">Apply Now</button>
-                                                </div>
-                                            </li>
-                                        ))
+                                                </li>
+                                            ))
+                                        )
                                     }
                                 </ul>
                             </main>

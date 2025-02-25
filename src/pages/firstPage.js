@@ -26,6 +26,7 @@ const LogIn = () => {
             const contractInstance = await createContractInstance(signer_val);
             const userRes = await contractInstance.getUser(signerAddress);
             setContract({ address: signerAddress, signer: signer_val });
+            console.log(userRes);
             if(!userRes) {
                 const userRes_ = await contractInstance.getHirer(signerAddress);
                 if(!userRes_) return navigate(`/register`);

@@ -46,7 +46,7 @@
     display: flex;
 }
 .sidebar {
-    width: 280px;
+    width: 270px;
     background: white;
     padding: 20px;
     border-radius: 12px;
@@ -94,7 +94,7 @@
     border: none;
 }
 .job-listings {
-    flex-grow: 1;
+    width: calc(100% - 280px);
     background: white;
     padding: 20px;
     border-radius: 12px;
@@ -124,6 +124,9 @@
 .job-card:hover {
     transform: scale(1.02);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.job-card > div {
+    margin-right: 9px;
 }
 .job-card p {
     margin-top: 6px;

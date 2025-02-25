@@ -19,6 +19,7 @@ const HirersOffersPage = () => {
     const [loading, setLoading] = useState(true);
     const [modal, setModal] = useState("");
     const [dropdown, setDropdown] = useState("");
+    const [search, setSearch] = useState("");
     const [checked, setChecked] = useState("");
     const [checker, setChecker] = useState([]);
     const [displayData, setDisplayData] = useState([]);
@@ -82,15 +83,19 @@ const HirersOffersPage = () => {
     const filterSearch = () => {
         const arr = [];
         for(const offer of offers) {
-            if(checked.includes(offer.skill)) arr.push(offer);
-            else if(offer.name === "Remote frontend Developer" && checked.includes("Web Development")) arr.push(offer);
+            if(checker.length === 0 || checker.includes(offer.skill)) arr.push(offer);
+            else if(offer.name.toLowerCase().includes("developer") && checker.includes("Web Development")) arr.push(offer);
         }
-        setDisplayData(arr);
+        const disp = [];
+        for(const ar of arr) {
+            if(ar.name.toLowerCase().includes(search.toLowerCase())) disp.push(ar);
+        }
+        setDisplayData(disp);
     };
 
     useEffect(() => {
-        filterSearch();
-    }, [checker.join("")]);
+        if(search) filterSearch();
+    }, [search, checker.join("")]);
 
     return (
         <>
@@ -98,7 +103,7 @@ const HirersOffersPage = () => {
                 <header className="app-header">
                     <div className="logo"><strong>Crypto Freelance</strong></div>
                     <div className="search-bar">
-                        <input type="text" placeholder="Search for jobs..." />
+                        <input type="text" placeholder="Search for jobs..." onChange={(e) => setSearch(e.target.value)} />
                     </div>
                     <button className="connect-wallet" onClick={()=>navigate(`/app/user-h/${contract.address}`)}>
                         {shortenAddy(contract.address || "") || "Connect Wallet"}
@@ -180,18 +185,23 @@ const HirersOffersPage = () => {
                                         <NoData text={`No offers has bee created yet`} 
                                         btnFn={() => setModal("create")} btnTxt={`Create one`} />
                                         :
-                                        displayData.map((val, idx) => (
-                                            <li className="jl-li" key={`jli-${idx}`}>
-                                                <div className="job-card" onClick={(e) => handleClick(e, val)}>
-                                                    <div>
-                                                        <h3>{val.name}</h3>
-                                                        <p>{val.description}</p>
-                                                        <strong>Budget: {val.pay_amount}</strong>
+                                        (
+                                            displayData.length === 0 ?
+                                            <NoData text={`No offers for search among the categories selected`}  />
+                                            :
+                                            displayData.map((val, idx) => (
+                                                <li className="jl-li" key={`jli-${idx}`}>
+                                                    <div className="job-card" onClick={(e) => handleClick(e, val)}>
+                                                        <div>
+                                                            <h3>{val.name}</h3>
+                                                            <p>{val.description}</p>
+                                                            <strong>Budget: {val.pay_amount}</strong>
+                                                        </div>
+                                                        <button className="apply-btn">Applicants</button>
                                                     </div>
-                                                    <button className="apply-btn">Applicants</button>
-                                                </div>
-                                            </li>
-                                        ))
+                                                </li>
+                                            ))
+                                        )
                                     }
                                 </ul>
                             </main>
